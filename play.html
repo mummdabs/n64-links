@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+  <title>N64 Player</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #101010;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      padding: 12px;
+      text-align: center;
+      background: #202020;
+    }
+
+    #game {
+      width: 100%;
+      height: calc(100vh - 55px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <span id="game-title">Nintendo 64</span>
+  </header>
+
+  <div id="game"></div>
+
+  <script>
+    const params = new URLSearchParams(
+      window.location.search
+    );
+
+    const rom = params.get("rom");
+    const title = params.get("title") || "Nintendo 64";
+
+    if (!rom || !/^roms\/[^/]+\.(z64|n64|v64)$/i.test(rom)) {
+      document.body.innerHTML =
+        "<h2>Juego no configurado o enlace inválido</h2>";
+      throw new Error("ROM inválida");
+    }
+
+    document.getElementById("game-title").textContent = title;
+
+    EJS_player = "#game";
+    EJS_core = "n64";
+    EJS_gameName = title;
+    EJS_gameUrl = new URL(rom, location.href).href;
+    EJS_pathtodata =
+      "https://cdn.emulatorjs.org/stable/data/";
+    EJS_controlScheme = "n64";
+    EJS_language = "es-ES";
+  </script>
+
+  <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+
+</body>
+</html>
