@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
@@ -36,33 +36,68 @@
 </head>
 
 <body>
+
   <div id="game"></div>
 
   <script>
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
+
     const rom = params.get("rom");
     const title = params.get("title") || "Retro Player";
 
-    if (!rom || !/^roms\/[^/]+\.(z64|n64|v64|gbc|gb)$/i.test(rom)) {
+    // Validar archivo y extensión
+    if (
+      !rom ||
+      !/^roms\/[^/]+\.(z64|n64|v64|gbc|gb|gba)$/i.test(rom)
+    ) {
       document.body.innerHTML =
         "<h2 style='color:white'>Juego no configurado o enlace inválido</h2>";
+
       throw new Error("ROM inválida");
     }
 
+    // Detectar consola automáticamente
     const extension = rom.split(".").pop().toLowerCase();
-    const isGameBoy = extension === "gbc" || extension === "gb";
 
+    let core;
+    let controls;
+
+    switch (extension) {
+
+      case "gb":
+      case "gbc":
+        core = "gb";
+        controls = "gb";
+        break;
+
+      case "gba":
+        core = "gba";
+        controls = "gba";
+        break;
+
+      case "z64":
+      case "n64":
+      case "v64":
+        core = "mupen64plus_next";
+        controls = "n64";
+        break;
+
+    }
+
+    // Configuración EmulatorJS
     document.title = title;
 
     EJS_player = "#game";
-    EJS_core = isGameBoy ? "gb" : "mupen64plus_next";
+    EJS_core = core;
     EJS_gameName = title;
-    EJS_gameUrl = new URL(rom, location.href).href;
+    EJS_gameUrl = new URL(rom, window.location.href).href;
     EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-    EJS_controlScheme = isGameBoy ? "gb" : "n64";
+    EJS_controlScheme = controls;
     EJS_language = "es-ES";
+
   </script>
 
   <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
+
 </body>
 </html>
