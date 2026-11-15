@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
+
   <title>N64 Player</title>
 
   <style>
@@ -31,28 +32,11 @@
       height: 100dvh;
       background: #000;
     }
-
-    #fullscreen-btn {
-      position: fixed;
-      z-index: 99999;
-      right: 12px;
-      bottom: calc(12px + env(safe-area-inset-bottom));
-      width: 44px;
-      height: 44px;
-      border: 0;
-      border-radius: 12px;
-      background: #292929;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      opacity: 0.85;
-    }
   </style>
 </head>
 
 <body>
   <div id="game"></div>
-  <button id="fullscreen-btn" aria-label="Pantalla completa">⛶</button>
 
   <script>
     const params = new URLSearchParams(location.search);
@@ -60,7 +44,8 @@
     const title = params.get("title") || "Nintendo 64";
 
     if (!rom || !/^roms\/[^/]+\.(z64|n64|v64)$/i.test(rom)) {
-      document.body.innerHTML = "<h2 style='color:white'>Juego no configurado o enlace inválido</h2>";
+      document.body.innerHTML =
+        "<h2 style='color:white'>Juego no configurado o enlace inválido</h2>";
       throw new Error("ROM inválida");
     }
 
@@ -73,18 +58,6 @@
     EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
     EJS_controlScheme = "n64";
     EJS_language = "es-ES";
-
-    document.getElementById("fullscreen-btn").addEventListener("click", async () => {
-      try {
-        if (!document.fullscreenElement) {
-          await document.documentElement.requestFullscreen();
-        } else {
-          await document.exitFullscreen();
-        }
-      } catch (error) {
-        console.log("Pantalla completa no disponible en este navegador");
-      }
-    });
   </script>
 
   <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
