@@ -3,69 +3,90 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>N64 Player</title>
 
   <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: #101010;
-      color: white;
-      font-family: Arial, sans-serif;
+    * {
+      box-sizing: border-box;
     }
 
-    header {
-      padding: 12px;
-      text-align: center;
-      background: #202020;
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
     }
 
     #game {
+      position: fixed;
+      inset: 0;
       width: 100%;
-      height: calc(100vh - 55px);
+      height: 100%;
+      height: 100dvh;
+      background: #000;
+    }
+
+    #fullscreen-btn {
+      position: fixed;
+      z-index: 99999;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 12px;
+      background: #292929;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      opacity: 0.85;
     }
   </style>
 </head>
 
 <body>
-
-  <header>
-    <span id="game-title">Nintendo 64</span>
-  </header>
-
   <div id="game"></div>
+  <button id="fullscreen-btn" aria-label="Pantalla completa">⛶</button>
 
   <script>
-    const params = new URLSearchParams(
-      window.location.search
-    );
-
+    const params = new URLSearchParams(location.search);
     const rom = params.get("rom");
     const title = params.get("title") || "Nintendo 64";
 
     if (!rom || !/^roms\/[^/]+\.(z64|n64|v64)$/i.test(rom)) {
-      document.body.innerHTML =
-        "<h2>Juego no configurado o enlace inválido</h2>";
+      document.body.innerHTML = "<h2 style='color:white'>Juego no configurado o enlace inválido</h2>";
       throw new Error("ROM inválida");
     }
 
-    document.getElementById("game-title").textContent = title;
+    document.title = title;
 
     EJS_player = "#game";
     EJS_core = "mupen64plus_next";
     EJS_gameName = title;
     EJS_gameUrl = new URL(rom, location.href).href;
-    EJS_pathtodata =
-      "https://cdn.emulatorjs.org/stable/data/";
+    EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
     EJS_controlScheme = "n64";
     EJS_language = "es-ES";
+
+    document.getElementById("fullscreen-btn").addEventListener("click", async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch (error) {
+        console.log("Pantalla completa no disponible en este navegador");
+      }
+    });
   </script>
 
   <script src="https://cdn.emulatorjs.org/stable/data/loader.js"></script>
-
 </body>
 </html>
