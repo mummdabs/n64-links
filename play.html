@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
 
-  <title>N64 Player</title>
+  <title>Retro Player</title>
 
   <style>
     * {
@@ -41,22 +41,25 @@
   <script>
     const params = new URLSearchParams(location.search);
     const rom = params.get("rom");
-    const title = params.get("title") || "Nintendo 64";
+    const title = params.get("title") || "Retro Player";
 
-    if (!rom || !/^roms\/[^/]+\.(z64|n64|v64)$/i.test(rom)) {
+    if (!rom || !/^roms\/[^/]+\.(z64|n64|v64|gbc|gb)$/i.test(rom)) {
       document.body.innerHTML =
         "<h2 style='color:white'>Juego no configurado o enlace inválido</h2>";
       throw new Error("ROM inválida");
     }
 
+    const extension = rom.split(".").pop().toLowerCase();
+    const isGameBoy = extension === "gbc" || extension === "gb";
+
     document.title = title;
 
     EJS_player = "#game";
-    EJS_core = "mupen64plus_next";
+    EJS_core = isGameBoy ? "gb" : "mupen64plus_next";
     EJS_gameName = title;
     EJS_gameUrl = new URL(rom, location.href).href;
     EJS_pathtodata = "https://cdn.emulatorjs.org/stable/data/";
-    EJS_controlScheme = "n64";
+    EJS_controlScheme = isGameBoy ? "gb" : "n64";
     EJS_language = "es-ES";
   </script>
 
